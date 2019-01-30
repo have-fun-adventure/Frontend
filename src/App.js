@@ -3,6 +3,7 @@ import "./App.css";
 import Nav from "./components/Nav";
 import About from "./components/About";
 import UserForm from "./components/UserForm"
+import Activity from "./components/Activity";
 
 
 
@@ -17,9 +18,8 @@ class App extends Component {
       userInfo: undefined,
       activityInfo: undefined,
       activityForm:false,
-      // username: '',
+      username: '',
       // loginForm: false,
-      // results: [],
       userForm: false,
       // showProfile: false
  
@@ -117,10 +117,6 @@ class App extends Component {
         })
     }
 
-  //handel thre form sumbmission if the user to create a new user or updtae user info
-  handleFormSubmit(user) {
-    this.state.userInfo ? this.updateUserInfo(user) : this.createNewUser(user)
-  }
 
   // update user information in the database 
   updateUserInfo(user) {
@@ -151,7 +147,6 @@ class App extends Component {
       loginForm: false
     });
   }
-
   // render user form for the registeration
   renderUserForm() {
     return <UserForm userInfo={this.state.userInfo} 
@@ -193,6 +188,76 @@ class App extends Component {
   //     </div>
   //   )
   // }
+
+  //handel activity submit  
+  handleSubmit(event) {
+    event.preventDefault();
+
+    fetch(`${API_URL}activity/${this.state.id}`)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          activityInfo: data,
+          activityForm: false
+        })
+      })
+      .catch(error => {
+        console.log('App.js handleSubmit function: ', error);
+        
+      })
+    console.log(this.state.activityInfo);
+  }
+
+  handleFormActivity(activity) {
+    this.state.activityInfo ? this.updateActivityInfo(activity) : this.createNewActivity(activity)
+  }
+   // update activity information in the database 
+   updateActivityInfo(activity) {
+    console.log("##", activity);
+    const url = `${API_URL}activity/${activity.id}`
+
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(activity)
+    })
+      .then(response => response.json())
+      .then(data => {
+        this.setState({ 
+          activityInfo: data,
+          activityForm: false 
+        })
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
+  createNewActivity(activity) {
+    const url = `${API_URL}activity`
+console.log("activiiiiiity info",activity)
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(activity)
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log("accccccccctivity data",data)
+
+        this.setState({ 
+          activityInfo: data,
+          activityForm: false
+         })
+      })
+      .catch(error => {
+        console.log('createNewactivity Error: ', error)
+      })
+  }
+  
   
   render() {
     return (
@@ -207,6 +272,8 @@ class App extends Component {
       <UserForm userInfo={this.state.userInfo} 
                      handleFormSubmit={this.handleFormSubmit.bind(this)} 
                      handleRegister={this.handleRegister.bind(this)} 
+                     />
+                     <Activity handleFormActivity={this.handleFormActivity.bind(this) }
                      />
 
       </div>
