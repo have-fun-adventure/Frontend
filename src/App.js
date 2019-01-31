@@ -4,9 +4,7 @@ import Nav from "./components/Nav";
 import About from "./components/About";
 import UserForm from "./components/UserForm"
 import Activity from "./components/Activity";
-
-
-
+import Profile from "./components/Profile"
 
 const API_URL = 'http://localhost:3000/';
 
@@ -16,26 +14,27 @@ class App extends Component {
     this.state = {
       activeNav: "home" ,
       userInfo: undefined,
+      username:'',
       activityInfo: undefined,
       activityForm:false,
-      username: '',
-      // loginForm: false,
+      loginForm: false,
       userForm: false,
-      // showProfile: false
+      showProfile: false
  
     };
   }
-
+// control Nav
   onNavClick = activeNav => {
     this.setState({ activeNav });
   };
-  // show the login form to show
-  // setLoginForm() {
-  //   this.setState({
-  //     loginForm: !this.state.loginForm,
-  //     userForm: false
-  //   });
-  // }
+
+  // show the login form 
+  setLoginForm() {
+    this.setState({
+      loginForm: !this.state.loginForm,
+      userForm: false
+    });
+  }
 
   handleChange(event) {
     this.setState({
@@ -56,13 +55,10 @@ class App extends Component {
         })
       })
       .catch(error => {
-        console.log('App.js handleSubmit function: ', error);
-        alert({
-          title: "This username NOT Registered",
-          icon: "warning"
-        });
+        console.log('error in submit user: ', error);
+        alert("This username NOT Registered");
       })
-    console.log(this.state.userInfo);
+    console.log("this.state.userInfo:" , this.state.userInfo);
   }
   //handel thre form sumbmission if the user to create a new user or updtae user info
   handleFormSubmit(user) {
@@ -71,7 +67,7 @@ class App extends Component {
 
   // update user information in the database 
   updateUserInfo(user) {
-    console.log("##", user);
+    console.log("update user info ", user);
     const url = `${API_URL}user/${user.id}`
 
     fetch(url, {
@@ -92,9 +88,13 @@ class App extends Component {
         console.log(error);
       })
     }
+
+
+
+      // create user information in the database 
     createNewUser(user) {
       const url = `${API_URL}user`
-  console.log("uuuuuuuuuuuser info",user)
+  console.log("create user info",user)
       fetch(url, {
         method: 'POST',
         headers: {
@@ -104,7 +104,7 @@ class App extends Component {
       })
         .then(response => response.json())
         .then(data => {
-          console.log("uuuuuuuuuuuser data",data)
+          console.log("create user info  data",data)
 
           this.setState({ 
             userInfo: data,
@@ -118,35 +118,15 @@ class App extends Component {
     }
 
 
-  // update user information in the database 
-  updateUserInfo(user) {
-    console.log("##", user);
-    const url = `${API_URL}user/${user.id}`
 
-    fetch(url, {
-      method: 'PUT',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(user)
-    })
-      .then(response => response.json())
-      .then(data => {
-        this.setState({ 
-          userInfo: data,
-          userForm: false 
-        })
-      })
-      .catch(error => {
-        console.log(error);
-      })
-  }
   handleRegister() {
     this.setState({
       userForm: !this.state.userForm,
       loginForm: false
     });
   }
+
+
   // render user form for the registeration
   renderUserForm() {
     return <UserForm userInfo={this.state.userInfo} 
@@ -156,43 +136,40 @@ class App extends Component {
   }
 
   // render the user profile component
-  // renderUserProfile(){
-  //   return <UserProfile user={this.state.userInfo} 
-  //                       handleRegister={this.handleRegister.bind(this)} 
-  //                       renderSavedJob={this.renderSavedJob.bind(this)}
-  //                       setUserProfile={this.setUserProfile.bind(this)}
-  //                       setSelectedJob={this.setSelectedJob.bind(this)}
-  //                       />
-  // }
+  renderUserProfile(){
+    return <Profile user={this.state.userInfo} 
+                        handleRegister={this.handleRegister.bind(this)} 
+                        setUserProfile={this.setUserProfile.bind(this)}
+                        />
+  }
 
   // claer the state for log out
-  // handleLogout() {
-  //   this.setState({
-  //     username: '',
-  //     userInfo: undefined,
-  //     showProfile: false,
-  //     userForm: false
-  //   })
-  // }
+  handleLogout() {
+    this.setState({
+      username: '',
+      userInfo: undefined,
+      showProfile: false,
+      userForm: false
+    })
+  }
   
   //This function will render the log-in form it the login is true
-  // renderLoginForm() {
-  //   return (
-  //     <div className="user-form">
-  //       <form className="show-form" onSubmit={this.handleSubmit.bind(this)}>
-  //         <div className="close-modal" onClick={ () => this.setLoginForm() }>x</div>
-  //         <label>Username: </label>
-  //         <input type="text" placeholder="Enter username" onChange={this.handleChange.bind(this)} />
-  //         <button>Login</button>
-  //       </form>
-  //     </div>
-  //   )
-  // }
+  renderLoginForm() {
+    return (
+      <div className="user-form">
+        <form className="show-form" onSubmit={this.handleSubmit.bind(this)}>
+          <div className="close-modal" onClick={ () => this.setLoginForm() }>x</div>
+          <label>Username: </label>
+          <input type="text" placeholder="Enter username" onChange={this.handleChange.bind(this)} />
+          <button>Login</button>
+        </form>
+      </div>
+    )
+  }
 
   //handel activity submit  
-  handleSubmit(event) {
+  handleActivitySubmit(event) {
     event.preventDefault();
-
     fetch(`${API_URL}activity/${this.state.id}`)
       .then(response => response.json())
       .then(data => {
@@ -211,6 +188,8 @@ class App extends Component {
   handleFormActivity(activity) {
     this.state.activityInfo ? this.updateActivityInfo(activity) : this.createNewActivity(activity)
   }
+
+
    // update activity information in the database 
    updateActivityInfo(activity) {
     console.log("##", activity);
@@ -231,12 +210,14 @@ class App extends Component {
         })
       })
       .catch(error => {
-        console.log(error);
+        console.log("update activity info error :", error);
       })
   }
+
+
   createNewActivity(activity) {
     const url = `${API_URL}activity`
-console.log("activiiiiiity info",activity)
+console.log("create new activity info",activity)
     fetch(url, {
       method: 'POST',
       headers: {
@@ -246,7 +227,7 @@ console.log("activiiiiiity info",activity)
     })
       .then(response => response.json())
       .then(data => {
-        console.log("accccccccctivity data",data)
+        console.log("create new activity data",data)
 
         this.setState({ 
           activityInfo: data,
@@ -254,7 +235,7 @@ console.log("activiiiiiity info",activity)
          })
       })
       .catch(error => {
-        console.log('createNewactivity Error: ', error)
+        console.log('create Newa ctivity Error: ', error)
       })
   }
   
@@ -262,19 +243,25 @@ console.log("activiiiiiity info",activity)
   render() {
     return (
       <div>
+
         <Nav
           onNavClick={this.onNavClick}
           active={this.state.activeNav}
-          navs={["Home", "About", "Activity", "Trip", "Contact" , "Login"]}
-          navsRef={["Home", "About", "Activity", "Trip", "Contact" , "Login"]}
+          navs={["Home", "About", "Activity", "Login"]}
+          navsRef={["Home", "About", "Activity", "Login" ]}
         />
+
       <About/>
+
+      {this.renderLoginForm()}
+
       <UserForm userInfo={this.state.userInfo} 
                      handleFormSubmit={this.handleFormSubmit.bind(this)} 
                      handleRegister={this.handleRegister.bind(this)} 
                      />
-                     <Activity handleFormActivity={this.handleFormActivity.bind(this) }
+                     <Activity handleFormActivity={this.handleFormActivity.bind(this)}
                      />
+                   
 
       </div>
     );
