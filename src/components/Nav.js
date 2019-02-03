@@ -7,6 +7,7 @@ class Nav extends Component {
   }
   renderNavs() {
     return this.props.navs.map(nav => {
+
       let isActive = nav.toLowerCase() === this.props.active;
       let style = isActive ? "nav-item active" : "nav-item";
 
@@ -25,7 +26,7 @@ class Nav extends Component {
   }
   render() {
     return (
-      <nav className="navbar navbar-expand-lg fixed-top sticky">
+      <nav className="main-nav navbar navbar-expand-lg fixed-top sticky">
         <a className="navbar-brand navbar-logo pt-0 logo" href="#">
           <img
             src="https://i.ibb.co/F4GpSdT/pinterest-board-photo.png"
@@ -35,7 +36,7 @@ class Nav extends Component {
           <img
             src="https://i.ibb.co/F4GpSdT/pinterest-board-photo.png"
             alt=""
-            className="img-fluid logo-dark imge"
+            className="img-fluid logo-dark"
           />
         </a>
         <button

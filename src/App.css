@@ -1,16 +1,18 @@
-
 .about {
   background-color: #d4d4d4;
-  margin: 300px 22px 22px 22px;
+  margin: px 22px 22px 22px;
 
 }
-.about > p {
+
+.about>p {
   text-align: center;
 }
-.imge{
+
+.imge {
   height: 200px;
   width: 200px;
 }
+
 .bg-overlay {
   background-color: rgba(0, 0, 0, 0.75);
   position: absolute;
@@ -21,7 +23,7 @@
 }
 
 .main-nav .navbar-nav li a {
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: #000 !important;
   font-size: 15px;
   background-color: transparent !important;
   margin: 0 7px;
@@ -33,7 +35,7 @@
 
 .main-nav .navbar-logo .logo-light,
 .main-nav .navbar-logo .logo-dark {
-  height: 60px;
+  height: 200px;
 }
 
 .logo .logo-light {
@@ -58,11 +60,8 @@
 .main-nav .navbar-nav li a:hover,
 .main-nav .navbar-nav li a:active,
 .main-nav .navbar-nav li.active a {
-  color: #e6c776 !important;
+  font-size: 20px;
 }
-
-
-
 
 .header-table-center {
   display: table-cell;
@@ -141,19 +140,24 @@ Media Query
   .main-nav .logo .logo-dark {
     display: inline-block;
   }
+
   .main-nav .navbar-nav li a {
     color: rgba(0, 0, 0, 0.6) !important;
   }
+
   .main-nav .logo .logo-light {
     display: none;
   }
+
   .h-100vh {
     height: auto;
   }
+
   .main-nav .navbar-nav li a {
     margin: 0 0px;
     line-height: 15px;
   }
+
   .header-name {
     font-size: 38px;
   }
