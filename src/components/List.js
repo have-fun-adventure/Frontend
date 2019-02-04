@@ -8,8 +8,8 @@ class List extends Component {
       name: props.listInfo ? props.listInfo.title : '',
       note: props.listInfo ? props.listInfo.description : '',
       user_id: props.userInfo ? props.userInfo.id : '',
-      activity_id:props.activitInfo ? props.activitInfo.id : '',
-      id: props.listInfo ? props.listInfo.id : null
+      activity_id: props.clickedActivity ? props.clickedActivity : '',
+      id: props.listInfo ? props.listInfo.id : null,
     }
   }
 
@@ -22,27 +22,29 @@ class List extends Component {
     })
   }
 
-  //Handle Register and edit submission
+  //Handle delete and edit list
   handleSubmit(event) {
     event.preventDefault();
-    this.props.handleFormList(this.state)
+    this.props.handleFormlist(this.state);
+  }
+
+  componentDidMount() {
+    console.log(`I'm inside the list component and this is for activity id ${this.props.clickedActivity}  and user id ${this.props.userInfo.id}`)
   }
 
   render() {
+    console.log(this.props);
     return (
-      <div className="list">
-<form onSubmit={this.handleSubmit.bind(this)}>
-  <div className="form-row">
-    <div className="col">
-      <input type="text" className="form-control" placeholder="Name your list" value={this.state.name} name="name"/>
-    </div>
-    <div className="col">
-      <input type="text" className="form-control" placeholder="make a spichal note" value={this.state.note} name="note"/>
-    </div>
-  </div>
-  <button>submit</button>
-</form>
-      </div>
+
+      <form onSubmit={this.handleSubmit.bind(this)}>
+        <div className="form-group">
+          <input type="text" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Name your list" />
+        </div>
+        <div className="form-group">
+          <input type="text" className="form-control" id="exampleInputPassword1" placeholder="note" />
+        </div>
+        <button type="submit" className="btn btn-primary">Submit</button>
+      </form>
 
     )
   }

@@ -15,16 +15,17 @@ class App extends Component {
     this.state = {
 
       navs: ["Home", "About", "Activity"],
-      user: null,
-
       activeNav: "home",
-      userInfo: '', // TODO : make the user info into an object 
+      activePage: "home",
+      clickedActivity: null,
+      user: null,
+      userInfo: '',
+      activityInfo: '',
+      listInfo: undefined,
       username: '',
       activity: [],
-      list: [],
-      room: false,
-      activityInfo: '',
-      listInfo: '',
+      // list: [],
+
       activityForm: false,
       listForm: false,
       loginForm: false,
@@ -43,8 +44,6 @@ class App extends Component {
   // fetch all activity
   componentDidMount() {
 
-
-
     this.checkForUser();
 
     if (this.state.user) {
@@ -52,7 +51,6 @@ class App extends Component {
     } else {
       this.setState({ navs: this.state.navs.concat(["login"]) })
     }
-
 
     console.log(this.state.navs)
     fetch(`${API_URL}activity`)
@@ -198,14 +196,39 @@ class App extends Component {
   //This function will render the log-in form it the login is true
   renderLoginForm() {
     return (
-      <div className="user-form">
-        <form className="show-form" onSubmit={this.handleSubmit.bind(this)}>
+      <div className="login p-5">
+        <form onSubmit={this.handleSubmit.bind(this)}>
           <div className="close-modal" onClick={() => this.setLoginForm()}>x</div>
-          <label>Username: </label>
-          <input type="text" placeholder="Enter username" onChange={this.handleChange.bind(this)} />
-          <button>Login</button>
+
+          <div class="row">
+            <div class="col-sm">
+              <label class="sr-only" for="inlineFormInputGroup">Username</label>
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">@</div>
+                </div>
+                <input type="text" className="form-control" id="inlineFormInputGroupUsername" placeholder="Username" onChange={this.handleChange.bind(this)} />
+              </div>
+            </div>
+
+
+            <div class="col-sm">
+              <label class="sr-only" for="inlineFormInputGroup">password</label>
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">*</div>
+                </div>
+                <input type="text" className="form-control" id="pass" placeholder="password" onChange={this.handleChange.bind(this)} />
+              </div>
+            </div>
+
+            <div className="col-sm">
+              <button type="submit" className="btn btn-primary">Submit</button>
+            </div>
+          </div>
         </form>
       </div>
+
     )
   }
   renderActivityForm() {
@@ -218,7 +241,7 @@ class App extends Component {
       )
     }
   }
-  //handel activity submit  
+  //handel activity submit
   handleActivitySubmit(event) {
     event.preventDefault();
 
@@ -240,7 +263,7 @@ class App extends Component {
   }
 
 
-  //handel update and create activity 
+  //handel update and create activity
   handleFormActivity(activity) {
     this.state.activityInfo ? this.updateActivityInfo(activity) : this.createNewActivity(activity)
   }
@@ -296,26 +319,26 @@ class App extends Component {
       })
   }
 
-  //handel delete and create list 
-  // handleFormlist(list) {
-  //   this.state.listInfo ? this.deleteList(list) : this.createNewlist(list)
-  // }
 
-  submitListForm() {
+  renderListForm() {
     return (
       <div>
         <List
-          // handleFormlist={this.handleFormlist(this.list)} 
-          createNewList={this.createNewList()}
+          handleFormlist={this.handleFormlist.bind(this)}
           userInfo={this.state.userInfo}
           activityInfo={this.state.activityInfo}
+          clickedActivity={this.state.clickedActivity}
         />
 
       </div>
     )
   }
+  changeActivePage = (activePage) => {
+    this.setState({ activePage })
+  }
 
-  createNewList(list) {
+  //create new list
+  createNewlist(list) {
     const url = `${API_URL}list`
     console.log("create new list info", list)
 
@@ -340,6 +363,7 @@ class App extends Component {
       })
   }
 
+  //delete list  
   deleteList(list) {
 
     const url = `${API_URL}list/${list.id}`
@@ -360,9 +384,21 @@ class App extends Component {
       })
   }
 
+  //handel delete and create list
+  handleFormlist = (list) => {
+    console.log("handle form ", list);
+    (this.state.listInfo) ? this.deleteList(list) : this.createNewlist(list)
+  }
 
+  changeCurrentActivity = (act) => {
 
-  // render all activity 
+    console.log("act", act)
+    this.setState({
+      clickedActivity: act.id
+    })
+  }
+
+  // render all activity
   renderActivity(active) {
     return active.map((act) => {
       return (
@@ -375,7 +411,7 @@ class App extends Component {
               <h5 className="card-title">{act.location}</h5>
               <h6 className="card-title">{act.date}</h6>
               <p className="card-text">{act.description}</p>
-              <a onclick={this.submitListForm()} className="btn btn-primary">Let's #have_fun  <span> 🌟 </span></a>
+              <a onClick={() => { this.changeActivePage("listForm"); this.changeCurrentActivity(act) }} className="btn btn-primary">Let's #have_fun  <span> 🌟 </span></a>
             </div>
           </div>
         </div>
@@ -396,26 +432,33 @@ class App extends Component {
           navs={this.state.navs}
         />
 
-        {this.state.activeNav === "login" ? this.renderLoginForm() : (
-          <div>
-            <About />
+        <div style={{ padding: " 200px 0 0 0" }}>
+          {this.state.activeNav === "login" ? this.renderLoginForm() : (
+            <div>
+              <About />
 
 
-            {this.renderActivityForm()}
+              {this.renderActivityForm()}
 
-            <UserForm userInfo={this.state.userInfo}
-              handleFormSubmit={this.handleFormSubmit.bind(this)}
-              handleRegister={this.handleRegister.bind(this)}
-            />
-            {this.renderActivity(this.state.activity)}
-            {this.submitListForm()}
-          </div>
-
-        )
-        }</div>
+              <UserForm userInfo={this.state.userInfo}
+                handleFormSubmit={this.handleFormSubmit.bind(this)}
+                handleRegister={this.handleRegister.bind(this)}
+              />
 
 
 
+              {this.renderActivity(this.state.activity)}
+            </div>
+
+
+          )
+          }</div>
+
+
+        {this.state.activePage === "listForm" ? this.renderListForm() : ""}
+
+
+      </div>
 
     );
   }

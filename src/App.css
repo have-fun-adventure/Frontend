@@ -162,3 +162,10 @@ Media Query
     font-size: 38px;
   }
 }
+.login{
+  display: flex;
+  flex-direction:column-reverse;
+  margin-top: 200px;
+
+
+}
