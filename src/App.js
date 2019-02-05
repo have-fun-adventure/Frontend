@@ -21,14 +21,14 @@ class App extends Component {
       navs: ["Home", "About", "Activity", "Signup"],
       activeNav: "home",
       activePage: "home",
-      clickedActivity: null,
+      clickedActivity: [],
       user: null,
       userInfo: '',
       activityInfo: '',
       listInfo: undefined,
       username: '',
       activity: [],
-      list: [],
+      list: undefined,
       activityForm: false,
       listForm: false,
       loginForm: false,
@@ -78,7 +78,7 @@ class App extends Component {
       })
   }
 
-//check user auth
+  //check user auth
   checkForUser() {
     const user = getUser();
     if (user) {
@@ -177,99 +177,99 @@ class App extends Component {
   }
 
 
-    /********************Activity*********************/
+  /********************Activity*********************/
 
 
 
-    renderActivityForm() {
-      console.log("i am in render activity form");
-      console.log(this.state.activityForm);
-      if (this.state.activityForm === true) {
-        return (
-          <Activity handleFormActivity={this.handleFormActivity.bind(this)}
-            userInfo={this.state.userInfo} />
-        )
-      }
+  renderActivityForm() {
+    console.log("i am in render activity form");
+    console.log(this.state.activityForm);
+    if (this.state.activityForm === true) {
+      return (
+        <Activity handleFormActivity={this.handleFormActivity.bind(this)}
+          userInfo={this.state.userInfo} />
+      )
     }
-    //handel activity submit
-    handleActivitySubmit(event) {
-      event.preventDefault();
-  
-      fetch(`${API_URL}activity/${this.state.id}`)
-        .then(response => response.json())
-        .then(data => {
-          this.setState({
-            activityInfo: data,
-            activityForm: true,
-            listForm: true,
-  
-          })
+  }
+  //handel activity submit
+  handleActivitySubmit(event) {
+    event.preventDefault();
+
+    fetch(`${API_URL}activity/${this.state.id}`)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          activityInfo: data,
+          activityForm: true,
+          listForm: true,
+
         })
-        .catch(error => {
-          console.log('App.js handleSubmit function: ', error);
-  
-        })
-      console.log(this.state.activityInfo);
-    }
-  
-  
-    //handel update and create activity
-    handleFormActivity(activity) {
-      this.state.activityInfo ? this.updateActivityInfo(activity) : this.createNewActivity(activity)
-    }
-  
-  
-    // update activity information in the database 
-    updateActivityInfo(activity) {
-      console.log("update activity info", activity);
-      const url = `${API_URL}activity/${activity.id}`
-  
-      fetch(url, {
-        method: 'PUT',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(activity)
       })
-        .then(response => response.json())
-        .then(data => {
-          this.setState({
-            activityInfo: data,
-            activityForm: true
-          })
-        })
-        .catch(error => {
-          console.log("update activity info error :", error);
-        })
-    }
-  
-  
-    createNewActivity(activity) {
-      const url = `${API_URL}activity`
-      console.log("create new activity info", activity)
-  
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(activity)
+      .catch(error => {
+        console.log('App.js handleSubmit function: ', error);
+
       })
-        .then(response => response.json())
-        .then(data => {
-          console.log("create new activity data", data)
-  
-          this.setState({
-            activityInfo: data,
-            activityForm: true
-          })
+    console.log(this.state.activityInfo);
+  }
+
+
+  //handel update and create activity
+  handleFormActivity(activity) {
+    this.state.activityInfo ? this.updateActivityInfo(activity) : this.createNewActivity(activity)
+  }
+
+
+  // update activity information in the database 
+  updateActivityInfo(activity) {
+    console.log("update activity info", activity);
+    const url = `${API_URL}activity/${activity.id}`
+
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(activity)
+    })
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          activityInfo: data,
+          activityForm: true
         })
-        .catch(error => {
-          console.log('create New activity Error: ', error)
+      })
+      .catch(error => {
+        console.log("update activity info error :", error);
+      })
+  }
+
+
+  createNewActivity(activity) {
+    const url = `${API_URL}activity`
+    console.log("create new activity info", activity)
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(activity)
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log("create new activity data", data)
+
+        this.setState({
+          activityInfo: data,
+          activityForm: true
         })
-    }
-  
-  
+      })
+      .catch(error => {
+        console.log('create New activity Error: ', error)
+      })
+  }
+
+
   // fetch all activity
   componentDidMount() {
 
@@ -298,33 +298,37 @@ class App extends Component {
       clickedActivity: act.id
     })
   }
- // render all activity
- renderActivity(active) {
-  return active.map((act) => {
-    return (
-      <div>
-        <div className="card text-center">
-          <div className="card-header">
-            {act.titel}
+  // render all activity
+  renderActivity(active) {
+    return active.map((act) => {
+      return (
+        <div>
+          <div className="card text-center">
+            <div className="card-header">
+              {act.titel}
+            </div>
+            <div className="card-body">
+              <h5 className="card-title">{act.location}</h5>
+              <h6 className="card-title">{act.date}</h6>
+              <p className="card-text">{act.description}</p>
+              <a onClick={() => { this.changeActivePage("listForm"); 
+                                  this.changeCurrentActivity(act);
+                                  this.fetchlist(act.id) } } 
+                                  className="btn btn-primary">Let's #have_fun  <span> 🌟 </span></a>
+            </div>
           </div>
-          <div className="card-body">
-            <h5 className="card-title">{act.location}</h5>
-            <h6 className="card-title">{act.date}</h6>
-            <p className="card-text">{act.description}</p>
-            <a onClick={() => { this.changeActivePage("listForm"); this.changeCurrentActivity(act); this.fetchlist(act.id) }} className="btn btn-primary">Let's #have_fun  <span> 🌟 </span></a>
-          </div>
-
-          {this.state.list ? this.renderListInActivity() : ""}
         </div>
-      </div>
-    )
-  })
-}
-
-    /********************Login*********************/
+      )
+    })
+  }
 
 
-  
+ 
+
+  /********************Login*********************/
+
+
+
   // claer the state for log out
   handleLogout() {
     this.setState({
@@ -373,9 +377,9 @@ class App extends Component {
 
     )
   }
- 
 
-    /********************List*********************/
+
+  /********************List*********************/
 
   renderListForm() {
     return (
@@ -447,50 +451,55 @@ class App extends Component {
 
   //handel delete and create list
   handleFormlist = (list) => {
-    
+
     (this.state.listInfo) ? this.deleteList(list) : this.createNewlist(list)
     console.log(list);
   }
 
-    // fetch all list by activity 
+  // fetch all list by activity 
   fetchlist(id) {
-    fetch(`${API_URL}list/${id}`)
-      .then((res) => { return res.json() })
+    console.log('idddddd', id);
+    console.log(`${API_URL}list/activity/${id}`);
+    fetch(`${API_URL}list/activity/${id}`)
+      .then((res) => res.json())
       .then((data) => {
         console.log("get all list data in this activity", data)
         this.setState({ list: data });
 
 
-        console.log("gjusy \n\n\n\n\n\n ", this.state.list)
+        console.log("fetch all list by activity  \n\n ", this.state.list)
 
       })
 
   }
 
   // render all list in spiesifiech activity
-  renderListInActivity(act) {
+  renderListInActivity() {
 
-    console.log("i'm in the render list activity", act)
-    // return this.state.list.map((li) => {
-    //   return (
-    //     <div>
-    //       <div className="card text-center">
-    //         <div className="card-header">
-    //           {li.name} list something
-    //         </div>
-    //         <div className="card-body">
-    //           <h5 className="card-title">{li.note}</h5>
-    //           <a onClick={this.deleteList()} className="btn btn-primary">DELETE<span> ❌ </span></a>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   )}
-// need the list as map >>> it's opject 
-    return (<p style={{ backgroundColor: "red" }}> {this.state.list.id}</p>)
+    console.log("i'm in the render list activity");
+    return this.state.list.map((li) => {
+        // cuz the result come as array of array 
+      return li.map((elm) => {
+        return (
+          <div>
+            <div className="card text-center">
+              <div className="card-header">
+                {elm.name} 
+            </div>
+              <div className="card-body">
+                <h5 className="card-title">{elm.note}</h5>
+                <a onClick={() => this.deleteList()} className="btn btn-primary">DELETE<span> ❌ </span></a>
+              </div>
+            </div>
+          </div>
+        )
+      })
+    })
+    
   }
 
 
-    /******************** App Render *********************/
+  /******************** App Render *********************/
 
   render() {
     return (
