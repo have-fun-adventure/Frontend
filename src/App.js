@@ -28,6 +28,7 @@ class App extends Component {
       listInfo: undefined,
       username: '',
       activity: [],
+      usersActivity: [],
       list: undefined,
       activityForm: false,
       listForm: false,
@@ -116,7 +117,7 @@ class App extends Component {
       })
       .catch(error => {
         console.log('error in submit user: ', error);
-        alert("This username NOT Registered");
+        swal("Oops", "This username NOT Registered", "error")
       })
     console.log("this.state.userInfo:", this.state.userInfo);
   }
@@ -149,6 +150,40 @@ class App extends Component {
       })
   }
 
+  //fetch all users in activity
+  fetchUsersActivity(id) {
+    console.log("usersActivity",this.state.usersActivity)
+    console.log('activity.id at activity', id);
+
+    console.log(`${API_URL}activity/activity/${id}`);
+    fetch(`${API_URL}activity/activity/${id}`)
+      .then((res) =>  { return res.json() })
+      .then((data) => {
+        console.log("get all users data in this activity", data)
+        this.setState({ usersActivity: data });
+        console.log("fetch all users by activity  \n\n ", this.state.usersActivity)
+
+      })
+
+  }
+  renderUsersActivity() {
+    console.log(" render usersActivity",this.state.usersActivity)
+    return this.state.usersActivity.map((elm) => {
+      return(
+      <div>
+
+<div className="card w-50">
+  <div className="card-body">
+    <h5 className="card-title">  {elm.username} </h5>
+   
+  </div>
+</div>
+        
+          
+      
+      </div>)
+     } )
+  }
 
 
   //handel new user 
@@ -175,6 +210,7 @@ class App extends Component {
       setUserProfile={this.setUserProfile.bind(this)}
     />
   }
+
 
 
   /********************Activity*********************/
@@ -311,10 +347,13 @@ class App extends Component {
               <h5 className="card-title">{act.location}</h5>
               <h6 className="card-title">{act.date}</h6>
               <p className="card-text">{act.description}</p>
-              <a onClick={() => { this.changeActivePage("listForm"); 
-                                  this.changeCurrentActivity(act);
-                                  this.fetchlist(act.id) } } 
-                                  className="btn btn-primary">Let's #have_fun  <span> 🌟 </span></a>
+              <a onClick={() => {
+                this.changeActivePage("listForm");
+                this.changeCurrentActivity(act);
+                this.fetchlist(act.id);
+                this.fetchUsersActivity(act.id);
+              }}
+                className="btn btn-primary">Let's #have_fun  <span> 🌟 </span></a>
             </div>
           </div>
         </div>
@@ -323,7 +362,7 @@ class App extends Component {
   }
 
 
- 
+
 
   /********************Login*********************/
 
@@ -478,14 +517,14 @@ class App extends Component {
 
     console.log("i'm in the render list activity");
     return this.state.list.map((li) => {
-        // cuz the result come as array of array 
+      // cuz the result come as array of array 
       return li.map((elm) => {
         return (
           <div>
             <div className="card text-center">
               <div className="card-header">
-                {elm.name} 
-            </div>
+                {elm.name}
+              </div>
               <div className="card-body">
                 <h5 className="card-title">{elm.note}</h5>
                 <a onClick={() => this.deleteList()} className="btn btn-primary">DELETE<span> ❌ </span></a>
@@ -495,7 +534,7 @@ class App extends Component {
         )
       })
     })
-    
+
   }
 
 
@@ -533,9 +572,10 @@ class App extends Component {
 
 
           {this.state.activePage === "listForm" ? this.renderListForm() : ""}
-          {this.state.activePage === "listForm" && this.state.list ? this.renderListInActivity() : ""}
+          {this.state.activePage === "listForm" && this.state.list ? (this.renderListInActivity()  ): ""}
+          {this.state.activePage === "listForm" ? this.renderUsersActivity() : ""}
 
-
+          
 
         </div>
 
