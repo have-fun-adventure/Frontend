@@ -205,3 +205,9 @@ Media Query
   margin-top: 200px;
 
 }
+.list{
+  opacity: 0.8;
+  border-radius: 25px;
+  margin: 0 auto;
+
+}

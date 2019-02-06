@@ -33,13 +33,13 @@ class List extends Component {
   }
 
   componentDidMount() {
-    console.log(`I'm inside the list component and this is for activity id ${this.props.clickedActivity}  and user id ${this.props.userInfo.id}`)
+    // console.log(`I'm inside the list component and this is for activity id ${this.props.clickedActivity}  and user id ${this.props.userInfo.id}`)
   }
 
   render() {
     console.log(this.props);
     return (
-        <div className="form-list"> 
+        <div className="p-5 bt-5"> 
       <form onSubmit={this.handleSubmit}>
         <div className="form-group">
           <input type="text" className="form-control" placeholder="Name your list" name="name" value={this.state.name} onChange={this.handleChange} />

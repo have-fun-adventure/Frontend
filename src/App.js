@@ -33,9 +33,6 @@ class App extends Component {
       list: undefined,
       activityForm: false,
       listForm: false,
-      // loginForm: false,
-      // userForm: false,
-      // form: "signup",
       showProfile: false,
     };
   }
@@ -58,7 +55,7 @@ class App extends Component {
   // create user information in the database 
   createNewUser(user) {
     const url = `${API_URL}user`
-    console.log("create user info", user)
+    // console.log("create user info", user)
     fetch(url, {
       method: 'POST',
       headers: {
@@ -68,7 +65,7 @@ class App extends Component {
     })
       .then(response => response.json())
       .then(data => {
-        console.log("create user info  data", data)
+        // console.log("create user info  data", data)
 
         this.setState({
           userInfo: data,
@@ -76,7 +73,7 @@ class App extends Component {
         })
       })
       .catch(error => {
-        console.log('create New User Error: ', error)
+        // console.log('create New User Error: ', error)
         swal("Oops", "Tnis username or email is Registerd", "error")
       })
   }
@@ -95,6 +92,7 @@ class App extends Component {
     this.setState({
       loginForm: !this.state.loginForm,
       userForm: false,
+      activityForm: true
     });
   }
 
@@ -124,10 +122,10 @@ class App extends Component {
 
       })
       .catch(error => {
-        console.log('error in submit user: ', error);
+        // console.log('error in submit user: ', error);
         swal("Oops", "This username NOT Registered", "error")
       })
-    console.log("this.state.userInfo:", this.state.userInfo);
+    // console.log("this.state.userInfo:", this.state.userInfo);
   }
   //handel thre form sumbmission if the user to create a new user or updtae user info
   handleFormSubmit(user) {
@@ -160,25 +158,32 @@ class App extends Component {
 
   // users  join  activity 
   createUserActivity(act) {
+    console.log('POSTING IN createUserActivity ', act)
     const url = `${API_URL}activity/activity`
-    console.log("create user activity info", act)
+    // console.log("create user activity info", actI)
+    // console.log("user inf from s", usI)
+    const data = {
+      activity_id: act,
+      user_id: getUser().id
+    }
     fetch(url, {
       method: 'POST',
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(act)
+      body: JSON.stringify(data)
     })
       .then(response => response.json())
       .then(data => {
         console.log("create user activity  data", data)
 
         this.setState({
-          usersActivity: data
+          usersActivity: this.state.usersActivity.concat([data]),
+          activityForm: true
         })
       })
       .catch(error => {
-        console.log('create New User activity Error: ', error)
+        // console.log('create New User activity Error: ', error)
         swal("Oops", "You have to be login", "error")
       })
   }
@@ -186,22 +191,22 @@ class App extends Component {
 
   //fetch all users in activity
   fetchUsersActivity(id) {
-    console.log("usersActivity", this.state.usersActivity)
-    console.log('activity.id at activity', id);
+    // console.log("usersActivity!!!!", this.state.usersActivity)
+    // console.log('activity.id at activity', id);
 
     console.log(`${API_URL}activity/activity/${id}`);
     fetch(`${API_URL}activity/activity/${id}`)
       .then((res) => { return res.json() })
       .then((data) => {
-        console.log("get all users data in this activity", data)
+        // console.log("get all users data in this activity", data)
         this.setState({ usersActivity: data });
-        console.log("fetch all users by activity  \n\n ", this.state.usersActivity)
+        // console.log("fetch all users by activity  \n\n ", this.state.usersActivity)
 
       })
 
   }
   renderUsersActivity() {
-    console.log(" render usersActivity", this.state.usersActivity)
+    // console.log(" render usersActivity", this.state.usersActivity)
     return this.state.usersActivity.map((elm) => {
       return (
         <div>
@@ -252,7 +257,7 @@ class App extends Component {
 
 
   renderActivityForm() {
-    console.log("i am in render activity form");
+    // console.log("i am in render activity form");
     console.log(this.state.activityForm);
     if (this.state.activityForm === true) {
       return (
@@ -276,7 +281,7 @@ class App extends Component {
         })
       })
       .catch(error => {
-        console.log('App.js handleSubmit function: ', error);
+        // console.log('App.js handleSubmit function: ', error);
 
       })
     console.log(this.state.activityInfo);
@@ -291,7 +296,7 @@ class App extends Component {
 
   // update activity information in the database 
   updateActivityInfo(activity) {
-    console.log("update activity info", activity);
+    // console.log("update activity info", activity);
     const url = `${API_URL}activity/${activity.id}`
 
     fetch(url, {
@@ -309,14 +314,14 @@ class App extends Component {
         })
       })
       .catch(error => {
-        console.log("update activity info error :", error);
+        // console.log("update activity info error :", error);
       })
   }
 
 
   createNewActivity(activity) {
     const url = `${API_URL}activity`
-    console.log("create new activity info", activity)
+    // console.log("create new activity info", activity)
 
     fetch(url, {
       method: 'POST',
@@ -327,7 +332,7 @@ class App extends Component {
     })
       .then(response => response.json())
       .then(data => {
-        console.log("create new activity data", data)
+        // console.log("create new activity data", data)
 
         this.setState({
           activityInfo: data,
@@ -335,7 +340,7 @@ class App extends Component {
         })
       })
       .catch(error => {
-        console.log('create New activity Error: ', error)
+        // console.log('create New activity Error: ', error)
       })
   }
 
@@ -350,12 +355,12 @@ class App extends Component {
     } else {
       this.setState({ navs: this.state.navs.concat(["login"]) })
     }
-    console.log(this.state.navs)
+    // console.log(this.state.navs)
 
     fetch(`${API_URL}activity`)
       .then((res) => { return res.json() })
       .then((data) => {
-        console.log("get all activity data", data)
+        // console.log("get all act/ivity data", data)
         this.setState({ activity: data });
       })
   }
@@ -388,6 +393,9 @@ class App extends Component {
                 this.changeCurrentActivity(act);
                 this.fetchlist(act.id);
                 this.fetchUsersActivity(act.id);
+                // this.setState({
+                //   userInfo: getUser()
+                // })
                 this.createUserActivity(act.id);
               }}
                 className="btn btn-primary">Let's #have_fun  <span> 🌟 </span></a>
@@ -407,7 +415,7 @@ class App extends Component {
   login = () => {
 
 
-    console.log("getting the user")
+    // console.log("getting the user")
     const userInfo = getUser();
     this.setState({ userInfo });
 
@@ -488,7 +496,7 @@ class App extends Component {
   //create new list
   createNewlist(list) {
     const url = `${API_URL}list`
-    console.log("create new list info", list)
+    // console.log("create new list info", list)
 
     fetch(url, {
       method: 'POST',
@@ -499,7 +507,7 @@ class App extends Component {
     })
       .then(response => response.json())
       .then(data => {
-        console.log("create new list data", data)
+        // console.log("create new list data", data)
 
         this.setState({
           listInfo: data,
@@ -507,7 +515,7 @@ class App extends Component {
         })
       })
       .catch(error => {
-        console.log('create New list Error: ', error)
+        // console.log('create New list Error: ', error)
         swal("Oops", "You should be login", "error")
 
       })
@@ -515,8 +523,9 @@ class App extends Component {
 
   //delete list  
   deleteList(list) {
-    console.log("list in dele list ", list)
-    const url = `${API_URL}list/${list.id}`
+    // console.log("list in dele list ", list)
+    const url = `${API_URL}list/${list}`
+    console.log(list)
 
     fetch(url, {
       method: 'DELETE'
@@ -530,7 +539,7 @@ class App extends Component {
         })
       })
       .catch(error => {
-        console.log("error from DEL list", error);
+        // console.log("error from DEL list", error);
       })
   }
 
@@ -544,16 +553,16 @@ class App extends Component {
 
   // fetch all list by activity 
   fetchlist(id) {
-    console.log('idddddd', id);
+    // console.log('idddddd', id);
     console.log(`${API_URL}list/activity/${id}`);
     fetch(`${API_URL}list/activity/${id}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("get all list data in this activity", data)
+        // console.log("get all list data in this activity", data)
         this.setState({ list: data });
 
 
-        console.log("fetch all list by activity  \n\n ", this.state.list)
+        // console.log("fetch all list by activity  \n\n ", this.state.list)
 
       })
 
@@ -562,19 +571,24 @@ class App extends Component {
   // render all list in spiesifiech activity
   renderListInActivity() {
 
-    console.log("i'm in the render list activity");
+    // console.log("i'm in the render list activity");
     return this.state.list.map((li) => {
       // cuz the result come as array of array 
       return li.map((elm) => {
         return (
-          <div>
-            <div className="card text-center">
-              <div className="card-header">
-                {elm.name}
-              </div>
-              <div className="card-body">
-                <h5 className="card-title">{elm.note}</h5>
-                <a onClick={() => this.deleteList()} className="btn btn-primary">DELETE<span> ❌ </span></a>
+          <div className="list">
+            <br />
+            <div className="row">
+              <div className="col-sm-4">
+                <div className="card text-center">
+                  <div className="card-header">
+                    {elm.name}
+                  </div>
+                  <div className="card-body">
+                    <h5 className="card-title">{elm.note}</h5>
+                    <a onClick={() => this.deleteList(elm.id)} className="btn btn-primary">DELETE<span> ❌ </span></a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

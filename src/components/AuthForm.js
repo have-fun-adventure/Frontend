@@ -22,19 +22,13 @@ class AuthForm extends Component {
   }
 
   componentDidMount() {
-    console.log("gggggggg \n\n\n\n\n", this.props)
+    // console.log("gggggggg \n\n\n\n\n", this.props)
 
     if (this.props.userInfo) {
 
-      console.log("printing user infor ", this.props.userInfo)
+      // console.log("printing user infor ", this.props.userInfo)
       this.setState({})
-      // username: this.props.userInfo != null ? this.props.userInfo.username : '',
-      // firstname: this.props.userInfo != null ? this.props.userInfo.firstname : '',
-      // lastname: this.props.userInfo != null ? this.props.userInfo.lastname : '',
-      // phone: this.props.userInfo != null ? this.props.userInfo.phone : '',
-      // gender: this.props.userInfo != null ? this.props.userInfo.gender : '',
-      // location: this.props.userInfo != null ? this.props.userInfo.location : '',
-      // id: this.props.userInfo != null ? this.props.userInfo.id : null
+
     }
   }
 
@@ -42,7 +36,7 @@ class AuthForm extends Component {
     let apiUrl = "http://localhost:3000";
 
     apiUrl += this.props.form === "signup" ? "/auth/signup" : "/auth";
-    console.log("\n\n\n\n\n", apiUrl);
+    // console.log("\n\n\n\n\n", apiUrl);
 
     fetch(apiUrl, {
       method: "POST",
