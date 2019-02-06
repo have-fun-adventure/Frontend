@@ -39,7 +39,7 @@ class List extends Component {
   render() {
     console.log(this.props);
     return (
-
+        <div className="form-list"> 
       <form onSubmit={this.handleSubmit}>
         <div className="form-group">
           <input type="text" className="form-control" placeholder="Name your list" name="name" value={this.state.name} onChange={this.handleChange} />
@@ -49,7 +49,7 @@ class List extends Component {
         </div>
         <button type="submit" className="btn btn-primary">Submit</button>
       </form>
-
+      </div>
     )
   }
 }

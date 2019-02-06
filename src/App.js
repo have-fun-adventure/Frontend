@@ -6,7 +6,7 @@ import UserForm from "./components/UserForm"
 import Activity from "./components/Activity";
 import Profile from "./components/Profile"
 import List from "./components/List"
-import { getUser } from "./services/auth"
+import { getUser ,   setJwt} from "./services/auth"
 import swal from 'sweetalert';
 
 
@@ -106,14 +106,20 @@ class App extends Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    fetch(`${API_URL}user/${this.state.username}`)
+    console.log("Button clicked")
+    // fetch(`${API_URL}user/${this.state.username}`)
+    fetch(`${API_URL}user/auth`)
       .then(response => response.json())
       .then(data => {
+
+        setJwt(data.token)
         this.setState({
-          userInfo: data,
+          userInfo: getUser(),
           loginForm: false,
           activityForm: true
         })
+        // console.log("data", data)
+
       })
       .catch(error => {
         console.log('error in submit user: ', error);
@@ -150,14 +156,40 @@ class App extends Component {
       })
   }
 
+  // users  join  activity 
+  createUserActivity(act) {
+    const url = `${API_URL}activity/activity`
+    console.log("create user activity info", act)
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(act)
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log("create user activity  data", data)
+
+        this.setState({
+          usersActivity: data
+        })
+      })
+      .catch(error => {
+        console.log('create New User activity Error: ', error)
+        swal("Oops", "You have to be login", "error")
+      })
+  }
+
+
   //fetch all users in activity
   fetchUsersActivity(id) {
-    console.log("usersActivity",this.state.usersActivity)
+    console.log("usersActivity", this.state.usersActivity)
     console.log('activity.id at activity', id);
 
     console.log(`${API_URL}activity/activity/${id}`);
     fetch(`${API_URL}activity/activity/${id}`)
-      .then((res) =>  { return res.json() })
+      .then((res) => { return res.json() })
       .then((data) => {
         console.log("get all users data in this activity", data)
         this.setState({ usersActivity: data });
@@ -167,22 +199,22 @@ class App extends Component {
 
   }
   renderUsersActivity() {
-    console.log(" render usersActivity",this.state.usersActivity)
+    console.log(" render usersActivity", this.state.usersActivity)
     return this.state.usersActivity.map((elm) => {
-      return(
-      <div>
+      return (
+        <div>
 
-<div className="card w-50">
-  <div className="card-body">
-    <h5 className="card-title">  {elm.username} </h5>
-   
-  </div>
-</div>
-        
-          
-      
-      </div>)
-     } )
+          <div className="card w-50">
+            <div className="card-body">
+              <h5 className="card-title">  {elm.username} </h5>
+
+            </div>
+          </div>
+
+
+
+        </div>)
+    })
   }
 
 
@@ -339,9 +371,11 @@ class App extends Component {
     return active.map((act) => {
       return (
         <div>
-          <div className="card text-center">
+          <br />
+
+          <div className="card text-center activity">
             <div className="card-header">
-              {act.titel}
+              {act.title}
             </div>
             <div className="card-body">
               <h5 className="card-title">{act.location}</h5>
@@ -352,6 +386,7 @@ class App extends Component {
                 this.changeCurrentActivity(act);
                 this.fetchlist(act.id);
                 this.fetchUsersActivity(act.id);
+                this.createUserActivity(act.id);
               }}
                 className="btn btn-primary">Let's #have_fun  <span> 🌟 </span></a>
             </div>
@@ -468,7 +503,7 @@ class App extends Component {
 
   //delete list  
   deleteList(list) {
-
+    console.log("list in dele list ", list)
     const url = `${API_URL}list/${list.id}`
 
     fetch(url, {
@@ -483,7 +518,7 @@ class App extends Component {
         })
       })
       .catch(error => {
-        console.log(error);
+        console.log("error from DEL list", error);
       })
   }
 
@@ -559,23 +594,27 @@ class App extends Component {
             <div> <About />  {this.renderActivity(this.state.activity)} {this.renderActivityForm()} </div>) : ""}
 
           {this.state.activePage === "login" ? (
-            <div> <About />  {this.renderLoginForm()} </div>) : ""}
+            <div> {this.renderLoginForm()} </div>) : ""}
 
           {this.state.activePage === "signup" ? (
-            <div> <About />
+            <div>
               <UserForm userInfo={this.state.userInfo}
                 handleFormSubmit={this.handleFormSubmit.bind(this)}
                 handleRegister={this.handleRegister.bind(this)} /> </div>) : ""}
 
           {this.state.activePage === "activity" ? (
-            <div>  {this.renderActivity(this.state.activity)} {this.renderActivityForm()} </div>) : ""}
+            <div>  {this.renderActivity(this.state.activity)} {this.renderActivityForm()}
+
+              <span className="glyphicon glyphicon-plus-sign"></span><br />
+
+            </div>) : ""}
 
 
           {this.state.activePage === "listForm" ? this.renderListForm() : ""}
-          {this.state.activePage === "listForm" && this.state.list ? (this.renderListInActivity()  ): ""}
+          {this.state.activePage === "listForm" && this.state.list ? (this.renderListInActivity()) : ""}
           {this.state.activePage === "listForm" ? this.renderUsersActivity() : ""}
 
-          
+
 
         </div>
 
