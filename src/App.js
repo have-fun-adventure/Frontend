@@ -6,8 +6,9 @@ import UserForm from "./components/UserForm"
 import Activity from "./components/Activity";
 import Profile from "./components/Profile"
 import List from "./components/List"
-import { getUser ,   setJwt} from "./services/auth"
+import { getUser, setJwt } from "./services/auth"
 import swal from 'sweetalert';
+import AuthForm from "./components/AuthForm";
 
 
 
@@ -23,7 +24,7 @@ class App extends Component {
       activePage: "home",
       clickedActivity: [],
       user: null,
-      userInfo: '',
+      userInfo: null,
       activityInfo: '',
       listInfo: undefined,
       username: '',
@@ -32,8 +33,9 @@ class App extends Component {
       list: undefined,
       activityForm: false,
       listForm: false,
-      loginForm: false,
-      userForm: false,
+      // loginForm: false,
+      // userForm: false,
+      // form: "signup",
       showProfile: false,
     };
   }
@@ -402,6 +404,16 @@ class App extends Component {
   /********************Login*********************/
 
 
+  login = () => {
+
+
+    console.log("getting the user")
+    const userInfo = getUser();
+    this.setState({ userInfo });
+
+    this.setState({ activePage: "home" })
+  };
+
 
   // claer the state for log out
   handleLogout() {
@@ -594,13 +606,15 @@ class App extends Component {
             <div> <About />  {this.renderActivity(this.state.activity)} {this.renderActivityForm()} </div>) : ""}
 
           {this.state.activePage === "login" ? (
-            <div> {this.renderLoginForm()} </div>) : ""}
+            <AuthForm userInfo={this.state.userInfo} form="login" onLogin={this.login} />
+          ) : ""}
 
-          {this.state.activePage === "signup" ? (
-            <div>
-              <UserForm userInfo={this.state.userInfo}
+          {this.state.activePage === "signup" ? (<AuthForm userInfo={this.state.userInfo} form="signup" onLogin={this.login} />) : ""}
+
+          {/* <UserForm userInfo={this.state.userInfo}
                 handleFormSubmit={this.handleFormSubmit.bind(this)}
-                handleRegister={this.handleRegister.bind(this)} /> </div>) : ""}
+                handleRegister={this.handleRegister.bind(this)} /> </div>) : ""} */}
+
 
           {this.state.activePage === "activity" ? (
             <div>  {this.renderActivity(this.state.activity)} {this.renderActivityForm()}
