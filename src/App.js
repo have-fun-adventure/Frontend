@@ -34,6 +34,7 @@ class App extends Component {
       activityForm: false,
       listForm: false,
       showProfile: false,
+      findUser: false
     };
   }
 
@@ -199,7 +200,11 @@ class App extends Component {
       .then((res) => { return res.json() })
       .then((data) => {
         // console.log("get all users data in this activity", data)
-        this.setState({ usersActivity: data });
+        this.setState({ usersActivity: data }, () => {
+          // this.state.usersActivity.filter(el => {
+          //   return (el.username === )
+          // })
+        });
         // console.log("fetch all users by activity  \n\n ", this.state.usersActivity)
 
       })
@@ -209,16 +214,15 @@ class App extends Component {
     // console.log(" render usersActivity", this.state.usersActivity)
     return this.state.usersActivity.map((elm) => {
       return (
-        <div>
+        <div className="row justify-content-md-center"> 
+        <div className="row">
 
-          <div className="card w-50">
-            <div className="card-body">
-              <h5 className="card-title">  {elm.username} </h5>
+        <div class="col-sm">
+            {elm.username} 
 
-            </div>
-          </div>
+              </div>
 
-
+              </div>
 
         </div>)
     })
@@ -393,11 +397,11 @@ class App extends Component {
                 this.changeCurrentActivity(act);
                 this.fetchlist(act.id);
                 this.fetchUsersActivity(act.id);
-                // this.setState({
-                //   userInfo: getUser()
-                // })
                 this.createUserActivity(act.id);
-              }}
+                
+                }
+                // this.createUserActivity(act.id);
+              }
                 className="btn btn-primary">Let's #have_fun  <span> 🌟 </span></a>
             </div>
           </div>
@@ -417,9 +421,12 @@ class App extends Component {
 
     // console.log("getting the user")
     const userInfo = getUser();
-    this.setState({ userInfo });
+    this.setState({ 
+      userInfo, 
+       activePage: "home" ,
+       activityForm: true
+      })
 
-    this.setState({ activePage: "home" })
   };
 
 
